@@ -8,12 +8,27 @@
 ![Hyprland](https://img.shields.io/badge/Hyprland-Wayland-58E1FF?logo=hyprland&logoColor=white)
 ![Flakes](https://img.shields.io/badge/Nix-Flakes-7EBAE4?logo=nixos&logoColor=white)
 ![Home Manager](https://img.shields.io/badge/Home%20Manager-module-8CAAEE)
+[![CI](https://github.com/am1rqr/dotfiles/actions/workflows/check.yml/badge.svg)](https://github.com/am1rqr/dotfiles/actions/workflows/check.yml)
+![License](https://img.shields.io/github/license/am1rqr/dotfiles)
 
-![desktop](docs/screenshots/desktop.jpg)
+![demo](docs/demo.gif)
 
 </div>
 
-> Screenshots are of the built-in 1920×1080 @ 120 Hz laptop panel (Lenovo IdeaPad Gaming 3, Ryzen 7 5800H, RTX 3050 Mobile).
+> Captured on the built-in 1920×1080 @ 120 Hz laptop panel (Lenovo IdeaPad Gaming 3, Ryzen 7 5800H, RTX 3050 Mobile).
+
+## Highlights
+
+- **One palette everywhere.** *BMW Dusk* is extracted from the wallpaper and shared by Kitty, Waybar, Rofi, hyprlock, wlogout, Zed, qimgv and Hyprland borders.
+- **One rebuild does it all.** Home Manager runs as a NixOS module, so system and user config land together.
+- **Boot to desktop without a login screen.** greetd auto-starts Hyprland, which immediately launches hyprlock, so the lock screen is the only gate. Plymouth plays a custom animated radar splash first.
+- **Laptop + external monitor aware.** The lock screen wrapper picks the HDMI output when present and falls back to the laptop panel.
+- **Small, split modules.** Hyprland, Waybar and Rofi are broken into one file per concern, easy to lift into your own config.
+- **Lean editor setup.** AstroNvim starts LSP servers lazily and inherits the terminal's transparency; Zed is configured for instant startup.
+
+## Gallery
+
+![waybar](docs/screenshots/waybar.png)
 
 ## Gallery
 
@@ -24,6 +39,10 @@
 | Power menu |
 | :---: |
 | ![wlogout](docs/screenshots/wlogout.jpg) |
+
+### Palette
+
+![BMW Dusk palette](docs/screenshots/palette.png)
 
 ## What's inside
 
@@ -84,6 +103,20 @@
 | `Alt + Shift` | Switch keyboard layout (us / ru) |
 
 Full list: [`modules/home/hyprland/binds.nix`](modules/home/hyprland/binds.nix).
+
+## Take only what you like
+
+You don't have to adopt the whole system. Most pieces are self-contained and can be copied on their own:
+
+| Want | Look at |
+| --- | --- |
+| The bar | [`modules/home/waybar/`](modules/home/waybar) |
+| The launcher theme | [`modules/home/rofi/`](modules/home/rofi) |
+| Hyprland split into small files | [`modules/home/hyprland/`](modules/home/hyprland) |
+| Lock screen with monitor auto-pick | [`modules/home/hyprlock/default.nix`](modules/home/hyprlock/default.nix) |
+| Plymouth boot animation | [`hosts/nixos/plymouth.nix`](hosts/nixos/plymouth.nix) |
+| Terminal palette | [`modules/home/kitty/colors.nix`](modules/home/kitty/colors.nix) |
+| Editor theme for Zed | [`modules/home/zed/themes/bmw-dusk.json`](modules/home/zed/themes/bmw-dusk.json) |
 
 ## Install
 
