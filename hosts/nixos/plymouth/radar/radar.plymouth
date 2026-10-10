@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=radar
+Description=Blue radar dot pulse boot animation
+ModuleName=script
+
+[script]
+ImageDir=@THEMEDIR@
+ScriptFile=@THEMEDIR@/radar.script

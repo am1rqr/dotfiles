@@ -1,0 +1,82 @@
+/**
+ * BMW Dusk — global rofi theme (palette from the wallpaper)
+ **/
+
+* {
+    bg:      #1A2430E6;
+    bg-alt:  #141C26FF;
+    bg-sel:  #2E3E4FFF;
+    fg:      #C1DBF1FF;
+    fg-dim:  #6E88B0FF;
+    accent:  #6395DAFF;
+    urgent:  #C2748CFF;
+
+    background-color: transparent;
+    text-color:       @fg;
+}
+
+window {
+    background-color: @bg;
+    border:           2px;
+    border-color:     @accent;
+    border-radius:    14px;
+    width:            620px;
+    padding:          18px;
+}
+
+mainbox {
+    spacing:  14px;
+    children: [ inputbar, listview ];
+}
+
+inputbar {
+    background-color: @bg-alt;
+    padding:          12px 16px;
+    border-radius:    10px;
+    spacing:          10px;
+    children:         [ prompt, entry ];
+}
+
+prompt {
+    text-color: @accent;
+}
+
+entry {
+    placeholder:       "Search...";
+    placeholder-color: @fg-dim;
+    cursor:            text;
+}
+
+listview {
+    lines:        9;
+    columns:      1;
+    spacing:      4px;
+    scrollbar:    false;
+    fixed-height: true;
+}
+
+element {
+    padding:       9px 14px;
+    border-radius: 10px;
+    spacing:       12px;
+    text-color:    @fg;
+}
+
+element normal urgent {
+    text-color: @urgent;
+}
+
+element selected {
+    background-color: @accent;
+    text-color:      @bg-alt;
+}
+
+element-icon {
+    size:           24px;
+    vertical-align: 0.5;
+}
+
+element-text {
+    vertical-align: 0.5;
+    text-color:     inherit;
+}

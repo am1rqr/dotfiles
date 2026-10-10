@@ -1,0 +1,30 @@
+builtins.fromJSON ''
+  {
+    "cpu": "\uf2db",
+    "memory": "\uf1c0",
+    "bat_0": "\uf244",
+    "bat_1": "\uf243",
+    "bat_2": "\uf242",
+    "bat_3": "\uf241",
+    "bat_4": "\uf240",
+    "bat_charging": "\uf0e7",
+    "bat_plugged": "\uf1e6",
+    "wifi": "\uf1eb",
+    "eth": "\uf0e8",
+    "wifi_off": "\uf127",
+    "vol_low": "\uf026",
+    "vol_med": "\uf027",
+    "vol_high": "\uf028",
+    "headphone": "\uf025",
+    "mic": "\uf130",
+    "phone": "\uf095",
+    "car": "\uf1b9",
+    "sun": "\uf185",
+    "sun_half": "\uf042",
+    "moon": "\uf186",
+    "keyboard": "\uf11c",
+    "power": "",
+    "flag_us": "\uD83C\uDDFA\uD83C\uDDF8",
+    "flag_ru": "\uD83C\uDDF7\uD83C\uDDFA"
+  }
+''

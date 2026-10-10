@@ -1,0 +1,15 @@
+/**
+ *
+ * BMW Dusk — palette extracted from the wallpaper
+ *
+ * Colors
+ **/
+
+* {
+    background:     #1A2430FF;
+    background-alt: #2E3E4FFF;
+    foreground:     #C1DBF1FF;
+    selected:       #6395DAFF;
+    active:         #8FA978FF;
+    urgent:         #C2748CFF;
+}
