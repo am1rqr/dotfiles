@@ -1,0 +1,31 @@
+name: Build or evaluation problem
+description: Something fails to build, evaluate or start
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you expected and what you got instead.
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command
+      description: The exact command you ran, e.g. `sudo nixos-rebuild switch --flake .#nixos`.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Full error output
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: rev
+    attributes:
+      label: Commit you are on
+      description: Output of `git rev-parse --short HEAD`.

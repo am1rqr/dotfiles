@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or "how do I adapt this"
+    url: https://github.com/am1rqr/dotfiles/discussions
+    about: Ask in Discussions instead of opening an issue.
