@@ -8,7 +8,7 @@
     #memory,
     #network,
     #pulseaudio,
-    #language,
+    #custom-language,
     #custom-power {
       background-color: @bg0;
       padding: 2px 14px;
@@ -90,7 +90,7 @@
       color: @peach;
     }
 
-    #language {
+    #custom-language {
       padding: 2px 14px;
       min-width: 30px;
       background-color: @bg0;

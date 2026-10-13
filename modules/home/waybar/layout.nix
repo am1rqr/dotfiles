@@ -18,7 +18,7 @@
     ];
 
     modules-right = [
-      "hyprland/language"
+      "custom/language"
       "pulseaudio"
       "backlight"
       "network"

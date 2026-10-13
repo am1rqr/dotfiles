@@ -12,7 +12,7 @@ let
   memory = import ./modules/memory.nix;
   battery = import ./modules/battery.nix;
   backlight = import ./modules/backlight.nix;
-  language = import ./modules/language.nix;
+  language = import ./modules/language.nix pkgs;
   network = import ./modules/network.nix;
   pulseaudio = import ./modules/pulseaudio.nix;
   power = import ./modules/power.nix;
