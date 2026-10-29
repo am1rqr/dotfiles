@@ -22,6 +22,7 @@
       "pulseaudio"
       "backlight"
       "network"
+      "bluetooth"
       "cpu"
       "memory"
       "battery"

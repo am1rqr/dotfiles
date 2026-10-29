@@ -14,6 +14,7 @@ let
   backlight = import ./modules/backlight.nix;
   language = import ./modules/language.nix pkgs;
   network = import ./modules/network.nix;
+  bluetooth = import ./modules/bluetooth.nix;
   pulseaudio = import ./modules/pulseaudio.nix;
   power = import ./modules/power.nix;
 
@@ -40,6 +41,7 @@ in
         backlight
         language
         network
+        bluetooth
         pulseaudio
         power
       ];

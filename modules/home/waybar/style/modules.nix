@@ -7,6 +7,7 @@
     #cpu,
     #memory,
     #network,
+    #bluetooth,
     #pulseaudio,
     #custom-language,
     #custom-power {
@@ -76,6 +77,15 @@
 
     #network.disconnected {
       color: @red;
+    }
+
+    #bluetooth {
+      color: @sapphire;
+    }
+
+    #bluetooth.off,
+    #bluetooth.disabled {
+      color: @fg1;
     }
 
     #pulseaudio {

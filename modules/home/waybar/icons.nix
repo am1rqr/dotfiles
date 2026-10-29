@@ -15,6 +15,8 @@ builtins.fromJSON ''
     "vol_low": "\uf026",
     "vol_med": "\uf027",
     "vol_high": "\uf028",
+    "bluetooth": "\uf293",
+    "bluetooth_off": "\uf294",
     "headphone": "\uf025",
     "mic": "\uf130",
     "phone": "\uf095",
