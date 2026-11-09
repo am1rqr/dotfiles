@@ -49,6 +49,8 @@
     "$mainMod, C, exec, grim -o $(hyprctl monitors -j | jq -r '.[] | select(.focused) | .name') - | tee ~/Screenshots/screenshot_$(date +%F_%T).png | wl-copy"
     "$mainMod SHIFT, C, exec, grim -g \"$(slurp)\" - | tee ~/Screenshots/screenshot_$(date +%F_%T).png | wl-copy"
     "$mainMod ALT, C, exec, grim -g \"$(slurp)\" - | wl-copy"
+    "$mainMod, A, exec, exam-hint"
+    ", mouse:274, exec, exam-hint"
   ];
 
   bindel = [

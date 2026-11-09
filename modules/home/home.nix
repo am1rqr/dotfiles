@@ -11,6 +11,7 @@
     ./hyprland/wallpaper.nix
     ./ncalayer/default.nix
     ./qimgv/default.nix
+    ./mako/default.nix
   ];
   programs.neovim = {
     enable = true;
@@ -129,6 +130,12 @@
           "ctrl-alt-v" = [ "task::Spawn" { task_name = "Preview file"; } ];
         };
       }
+      {
+        context = "Editor && extension == md";
+        bindings = {
+          "ctrl-shift-v" = "markdown::OpenPreviewToTheSide";
+        };
+      }
     ];
   };
 
@@ -225,6 +232,7 @@
     bottom
     jq
     obs-studio
+    kdePackages.kdenlive
     pgadmin4-desktopmode
     qdirstat
     rustdesk-flutter
@@ -242,6 +250,73 @@
     lua-language-server
     stylua
   ];
+
+  home.file.".local/bin/exam-hint" = {
+    executable = true;
+    text = ''
+      #!/usr/bin/env python3
+      import subprocess, tempfile, os, json, urllib.request, base64, re, sys
+
+      key_file = os.path.expanduser('~/.config/exam-hint/key')
+      try:
+          api_key = open(key_file).read().strip()
+      except FileNotFoundError:
+          subprocess.run(['notify-send', '--app-name=exam-hint', '--expire-time=4000', '?'])
+          sys.exit(1)
+
+      tmp = tempfile.mktemp(suffix='.png')
+      subprocess.run(['grim', tmp], check=True)
+      with open(tmp, 'rb') as f:
+          img_b64 = base64.b64encode(f.read()).decode()
+      os.unlink(tmp)
+
+      url = (
+          'https://generativelanguage.googleapis.com/v1beta/'
+          f'models/gemini-flash-latest:generateContent?key={api_key}'
+      )
+      body = {
+          "contents": [{
+              "parts": [
+                  {
+                      "text": (
+                          "This is a screenshot of a Moodle quiz. "
+                          "Find the question and its answer choices (labeled a, b, c, d). "
+                          "Determine which answer is correct. "
+                          "Reply with ONLY the position number: 1 for a, 2 for b, 3 for c, 4 for d. "
+                          "No other text."
+                      )
+                  },
+                  {"inline_data": {"mime_type": "image/png", "data": img_b64}}
+              ]
+          }],
+          "generationConfig": {"maxOutputTokens": 200, "temperature": 0}
+      }
+
+      try:
+          req = urllib.request.Request(
+              url,
+              data=json.dumps(body).encode(),
+              headers={'Content-Type': 'application/json'}
+          )
+          with urllib.request.urlopen(req, timeout=15) as resp:
+              data = json.loads(resp.read())
+          with open('/tmp/exam-hint.log', 'w') as log:
+              log.write(json.dumps(data, indent=2))
+          candidate = data['candidates'][0]
+          text = candidate.get('content', {}).get('parts', [{}])[0].get('text', "")
+          digit = re.search(r'[1-4]', text)
+          answer = digit.group() if digit else '?'
+      except Exception as e:
+          import traceback
+          with open('/tmp/exam-hint.log', 'a') as log:
+              traceback.print_exc(file=log)
+          answer = '!'
+
+      subprocess.run([
+          'notify-send', '--app-name=exam-hint', '--expire-time=5000', answer
+      ])
+    '';
+  };
 
   home.file.".config/nvim" = {
     source = ./nvim;

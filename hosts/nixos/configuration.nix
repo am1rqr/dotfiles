@@ -159,7 +159,6 @@
     (callPackage ../../modules/system/cisco-packet-tracer-901.nix { })
     google-chrome
     telegram-desktop
-    vscode
     android-studio
     android-tools
     git
