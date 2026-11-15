@@ -244,6 +244,7 @@
     tree-sitter
     lazygit
     bottom
+    btop
     jq
     obs-studio
     kdePackages.kdenlive
