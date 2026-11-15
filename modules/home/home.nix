@@ -155,6 +155,21 @@
       name = "Papirus-Dark";
       package = pkgs.papirus-icon-theme;
     };
+    gtk3.extraCss = ''
+      window.thunar {
+        background-color: rgba(38, 42, 52, 0.85);
+      }
+      window.thunar .background:not(:selected),
+      window.thunar .view:not(:selected),
+      window.thunar .sidebar,
+      window.thunar toolbar,
+      window.thunar menubar,
+      window.thunar statusbar,
+      window.thunar paned,
+      window.thunar scrolledwindow {
+        background-color: transparent;
+      }
+    '';
   };
 
   home.pointerCursor = {
