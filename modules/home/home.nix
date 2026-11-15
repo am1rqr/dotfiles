@@ -11,7 +11,6 @@
     ./hyprland/wallpaper.nix
     ./ncalayer/default.nix
     ./qimgv/default.nix
-    ./mako/default.nix
   ];
   programs.neovim = {
     enable = true;
@@ -272,18 +271,51 @@
       #!/usr/bin/env python3
       import subprocess, tempfile, os, json, urllib.request, base64, re, sys
 
+      import time, traceback
+
+      def log(msg):
+          with open('/tmp/exam-hint.log', 'a') as f:
+              f.write(time.strftime('%H:%M:%S ') + msg + '\n')
+
+      open('/tmp/exam-hint.log', 'w').close()
+      log('start')
+
+      state_file = os.path.join(os.environ['XDG_RUNTIME_DIR'], 'exam-hint-state')
+
+      def show(text):
+          with open(state_file, 'w') as f:
+              f.write(text)
+          subprocess.run(['pkill', '-RTMIN+8', 'waybar'])
+
+      def flash(text, secs=3):
+          show(text)
+          time.sleep(secs)
+          show("")
+
+      show('L')
+
       key_file = os.path.expanduser('~/.config/exam-hint/key')
       try:
           api_key = open(key_file).read().strip()
       except FileNotFoundError:
-          subprocess.run(['notify-send', '--app-name=exam-hint', '--expire-time=4000', '?'])
+          log('key file missing: ' + key_file)
+          flash('?')
           sys.exit(1)
 
       tmp = tempfile.mktemp(suffix='.png')
-      subprocess.run(['grim', tmp], check=True)
-      with open(tmp, 'rb') as f:
-          img_b64 = base64.b64encode(f.read()).decode()
-      os.unlink(tmp)
+      try:
+          grim = subprocess.run(['grim', tmp], capture_output=True, text=True)
+          log(f'grim rc={grim.returncode} stderr={grim.stderr.strip()!r}')
+          with open(tmp, 'rb') as f:
+              raw = f.read()
+      except Exception:
+          log('screenshot failed:\n' + traceback.format_exc())
+          flash('!')
+          sys.exit(1)
+      keep = '/tmp/exam-hint-last.png'
+      os.replace(tmp, keep)
+      log(f'screenshot {len(raw)} bytes, saved to {keep}')
+      img_b64 = base64.b64encode(raw).decode()
 
       url = (
           'https://generativelanguage.googleapis.com/v1beta/'
@@ -294,17 +326,20 @@
               "parts": [
                   {
                       "text": (
-                          "This is a screenshot of a Moodle quiz. "
-                          "Find the question and its answer choices (labeled a, b, c, d). "
-                          "Determine which answer is correct. "
-                          "Reply with ONLY the position number: 1 for a, 2 for b, 3 for c, 4 for d. "
-                          "No other text."
+                          "This is a screenshot of a Moodle quiz page. "
+                          "There may be multiple questions visible (Question 5, Question 6, etc.). "
+                          "For each visible question marked 'Not yet answered', "
+                          "determine ALL correct answers (some questions say 'Select all that apply'). "
+                          "Reply with ONLY lines in this exact format: "
+                          "'Q5: c e' or 'Q6: b' or 'Q7: a c d e' "
+                          "(question number, colon, space-separated correct option letters a-e). "
+                          "List only unanswered questions, in order. No other text."
                       )
                   },
                   {"inline_data": {"mime_type": "image/png", "data": img_b64}}
               ]
           }],
-          "generationConfig": {"maxOutputTokens": 200, "temperature": 0}
+          "generationConfig": {"maxOutputTokens": 2000, "temperature": 0}
       }
 
       try:
@@ -313,23 +348,32 @@
               data=json.dumps(body).encode(),
               headers={'Content-Type': 'application/json'}
           )
-          with urllib.request.urlopen(req, timeout=15) as resp:
+          t0 = time.time()
+          with urllib.request.urlopen(req, timeout=40) as resp:
               data = json.loads(resp.read())
-          with open('/tmp/exam-hint.log', 'w') as log:
-              log.write(json.dumps(data, indent=2))
+              log(f'http {resp.status} in {time.time() - t0:.1f}s')
           candidate = data['candidates'][0]
-          text = candidate.get('content', {}).get('parts', [{}])[0].get('text', "")
-          digit = re.search(r'[1-4]', text)
-          answer = digit.group() if digit else '?'
-      except Exception as e:
-          import traceback
-          with open('/tmp/exam-hint.log', 'a') as log:
-              traceback.print_exc(file=log)
-          answer = '!'
+          parts = candidate.get('content', {}).get('parts', [])
+          text = "".join(p.get('text', "") for p in parts)
+          usage = data.get('usageMetadata', {})
+          log(f'model={data.get("modelVersion")} finishReason={candidate.get("finishReason")} '
+              f'tokens(prompt={usage.get("promptTokenCount")} thoughts={usage.get("thoughtsTokenCount")} '
+              f'out={usage.get("candidatesTokenCount")})')
+          log(f'response text: {text!r}')
+          lines = re.findall(r'Q(\d+):\s*([a-e](?:\s+[a-e])*)', text, re.IGNORECASE)
+          answers = [f'{n}{"".join(a.split())}' for n, a in lines] if lines else ['?']
+      except urllib.error.HTTPError as e:
+          log(f'http error {e.code}: {e.read().decode(errors="replace")[:500]}')
+          answers = ['!']
+      except Exception:
+          log('request failed:\n' + traceback.format_exc())
+          answers = ['!']
+      log(f'answers: {answers}')
 
-      subprocess.run([
-          'notify-send', '--app-name=exam-hint', '--expire-time=5000', answer
-      ])
+      for ans in answers:
+          show(ans.upper())
+          time.sleep(3)
+      show("")
     '';
   };
 

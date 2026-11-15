@@ -7,7 +7,7 @@
     #cpu,
     #memory,
     #network,
-    #bluetooth,
+    #bt,
     #pulseaudio,
     #custom-language,
     #custom-power {
@@ -81,6 +81,29 @@
 
     #bluetooth {
       color: @sapphire;
+    }
+
+    #bluetooth,
+    #custom-hintl,
+    #custom-hint {
+      background: transparent;
+      border: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #bluetooth {
+      padding: 0 2px;
+    }
+
+    #bt {
+      padding: 2px 7px;
+    }
+
+    #custom-hint {
+      color: @sapphire;
+      font-weight: 700;
+      padding-left: 2px;
     }
 
     #bluetooth.off,
