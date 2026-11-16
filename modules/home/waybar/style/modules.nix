@@ -97,7 +97,7 @@
     }
 
     #bt {
-      padding: 2px 7px;
+      padding: 2px 14px 2px 12px;
     }
 
     #custom-hint {

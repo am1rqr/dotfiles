@@ -270,9 +270,20 @@
     executable = true;
     text = ''
       #!/usr/bin/env python3
-      import subprocess, tempfile, os, json, urllib.request, base64, re, sys
+      import subprocess, tempfile, os, json, urllib.request, base64, re, sys, fcntl
 
       import time, traceback
+
+      lock = open(os.path.join(os.environ['XDG_RUNTIME_DIR'], 'exam-hint.lock'), 'w')
+      try:
+          fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+      except BlockingIOError:
+          sys.exit(0)
+      for name in ('exam-hint-showing', 'exam-hint-skip'):
+          try:
+              os.remove(os.path.join(os.environ['XDG_RUNTIME_DIR'], name))
+          except FileNotFoundError:
+              pass
 
       def log(msg):
           with open('/tmp/exam-hint.log', 'a') as f:
@@ -362,7 +373,8 @@
               f'out={usage.get("candidatesTokenCount")})')
           log(f'response text: {text!r}')
           lines = re.findall(r'Q(\d+):\s*([a-e](?:\s+[a-e])*)', text, re.IGNORECASE)
-          answers = [f'{n}{"".join(a.split())}' for n, a in lines] if lines else ['?']
+          letters = ["".join(a.split()) for _, a in lines]
+          answers = (letters if len(letters) == 1 else [f'{i}{a}' for i, a in enumerate(letters, 1)]) or ['?']
       except urllib.error.HTTPError as e:
           log(f'http error {e.code}: {e.read().decode(errors="replace")[:500]}')
           answers = ['!']
@@ -371,9 +383,19 @@
           answers = ['!']
       log(f'answers: {answers}')
 
+      showing_file = os.path.join(os.environ['XDG_RUNTIME_DIR'], 'exam-hint-showing')
+      skip_file = os.path.join(os.environ['XDG_RUNTIME_DIR'], 'exam-hint-skip')
+      open(showing_file, 'w').close()
       for ans in answers:
+          if os.path.exists(skip_file):
+              os.remove(skip_file)
           show(ans.upper())
-          time.sleep(3)
+          for _ in range(30):
+              time.sleep(0.1)
+              if os.path.exists(skip_file):
+                  os.remove(skip_file)
+                  break
+      os.remove(showing_file)
       show("")
     '';
   };

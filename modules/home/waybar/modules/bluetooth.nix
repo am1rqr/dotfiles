@@ -3,11 +3,16 @@ let
   icons = import ../icons.nix;
   hint = pkgs.writeShellScript "waybar-hint" ''
     s=$(cat "$XDG_RUNTIME_DIR/exam-hint-state" 2>/dev/null)
-    k=2
-    l=$(( (k - ''${#s}) / 2 ))
-    if [ "$1" = left ]; then n=$l; out=""; else n=$((k - l - ''${#s})); out="$s"; fi
-    for ((i = 0; i < n; i++)); do out+="&#8199;"; done
+    [ -z "$s" ] && s=$(${pkgs.bluez}/bin/bluetoothctl devices Connected 2>/dev/null | wc -l)
+    if [ "$1" = left ]; then out=""; else out="$s"; fi
     echo "$out"
+  '';
+  click = pkgs.writeShellScript "waybar-bt-click" ''
+    if [ -e "$XDG_RUNTIME_DIR/exam-hint-showing" ]; then
+      touch "$XDG_RUNTIME_DIR/exam-hint-skip"
+    else
+      exec blueman-manager
+    fi
   '';
 in
 {
@@ -16,12 +21,12 @@ in
     format-on = "${icons.bluetooth}";
     format-off = "${icons.bluetooth_off}";
     format-disabled = "${icons.bluetooth_off}";
-    format-connected = "${icons.bluetooth} {num_connections}";
+    format-connected = "${icons.bluetooth}";
     tooltip-format = "{controller_alias}\n{num_connections} connected";
     tooltip-format-connected = "{controller_alias}\n{device_enumerate}";
     tooltip-format-enumerate-connected = "{device_alias}";
     tooltip-format-enumerate-connected-battery = "{device_alias} {device_battery_percentage}%";
-    on-click = "~/.local/bin/exam-hint";
+    on-click = "${click}";
     on-click-right = "bluetoothctl power toggle";
   };
   "custom/hintl" = {
@@ -32,6 +37,7 @@ in
 
   "custom/hint" = {
     exec = "${hint} right";
+    interval = 3;
     signal = 8;
     tooltip = false;
   };
