@@ -156,7 +156,7 @@
     };
     gtk3.extraCss = ''
       window.thunar {
-        background-color: rgba(38, 42, 52, 0.85);
+        background-color: rgba(26, 36, 48, 0.8);
       }
       window.thunar .background:not(:selected),
       window.thunar .view:not(:selected),
@@ -165,7 +165,12 @@
       window.thunar menubar,
       window.thunar statusbar,
       window.thunar paned,
-      window.thunar scrolledwindow {
+      window.thunar scrolledwindow,
+      window.thunar viewport,
+      window.thunar treeview.view,
+      window.thunar iconview,
+      window.thunar box,
+      window.thunar grid {
         background-color: transparent;
       }
     '';
